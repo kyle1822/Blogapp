@@ -3,7 +3,13 @@ class PostsController < ApplicationController
   before_action :find_post, only: [:show, :edit, :update, :destroy]
 
   def index
-    @posts = Post.all
+
+    if params[:category].blank?
+      @posts = Post.all.order("created_at DESC")
+    else
+      @catagory_id = Catagory.find_by(name: params[:catagory]).id
+      @posts = Post.where(catagory_id: @catagory_id).order("created_at DEC")
+    end
   end
 
   def show
@@ -17,7 +23,7 @@ class PostsController < ApplicationController
     @post = Post.new(post_params)
 
     if @post.save
-      redirect_to @post, notice: "THe post was created!"
+      redirect_to @post, notice: "The post was created!"
     else
       render 'new'
     end
